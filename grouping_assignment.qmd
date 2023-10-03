@@ -190,7 +190,16 @@ Who are the top 5 individuals (vs. organization) were paid by the campaign commi
 
 ```{r}
 
+individual_payments <- payments %>%
+  filter(entity_type == "IND")
 
+top_individuals <- individual_payments %>%
+  group_by(payee_first_name, payee_last_name) %>%
+  summarize(total_payments = sum(disbursement_amount)) %>%
+  arrange(desc(total_payments)) %>%
+  head(5)  
+
+top_individuals
 
 ```
 
