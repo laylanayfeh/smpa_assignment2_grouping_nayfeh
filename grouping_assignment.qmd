@@ -211,4 +211,13 @@ For the indvidual who was paid the most, which payment category (disbursement_de
 payments_to_GLASSNER <- payments %>%
   filter(payee_first_name == "MICHAEL" & payee_last_name == "GLASSNER")
 
+top_payment_category_GLASSNER <- payments_to_GLASSNER %>%
+  group_by(disbursement_description) %>%
+  summarize(total_payments = sum(disbursement_amount)) %>%
+  arrange(desc(total_payments)) %>%
+  slice(1)
+
+top_payment_category_GLASSNER
+
+
 ```
