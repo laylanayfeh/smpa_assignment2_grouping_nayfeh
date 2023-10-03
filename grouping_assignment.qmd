@@ -208,6 +208,7 @@ For the indvidual who was paid the most, which payment category (disbursement_de
 
 ```{r}
 
-
+payments_to_GLASSNER <- payments %>%
+  filter(payee_first_name == "MICHAEL" & payee_last_name == "GLASSNER")
 
 ```
