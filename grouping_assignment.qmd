@@ -1,6 +1,6 @@
 ---
 title: "SMPA - Grouping Assignment"
-author: "YourNameHere"
+author: "Layla Nayfeh"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
   html:
@@ -61,11 +61,11 @@ Take a moment to look at the various categories included for each disbursement.
 
 Without doing any analysis yet, what are three questions you might try to answer using this dataset? Write your narrative answers in the spaces below.
 
-1.  
+1.  Where (in which states and cities) was the most money spent during Donald Trump's campaign?
 
-2.  
+2.  What was most often purchased/spent on?
 
-3.  
+3.  When was the most money spent?
 
 ## Coding Assignment Questions
 
@@ -83,9 +83,11 @@ How much was spent in the 2017 vs. 2018 reporting year?
 
 
 
+year_vs_year <- payments %>%
+  group_by(disbursement_year) %>%
+  summarize(total_spent = sum(disbursement_amount))
 
-
-
+year_vs_year
 
 ```
 
@@ -93,10 +95,19 @@ Tally the total overall disbursement amounts for each month (distinguishing betw
 
 ```{r}
 
+monthly_spend <- payments %>%
+  group_by(disbursement_year, disbursement_month) %>%
+  summarize(total_disbursement = sum(disbursement_amount))
 
 
+highest_monthly_spend <- monthly_spend %>%
+  filter(total_disbursement == max(total_disbursement))
 
+monthly_spend
 
+highest_monthly_spend 
+ 
+#oct 2018
 
 ```
 
@@ -104,10 +115,17 @@ Which recipient (recipient_name) was paid the most in the 2020 election cycle?
 
 ```{r}
 
+payments2020 <- payments %>%
+  filter(election_cycle == 2020)
 
+recipient_totals <- payments2020 %>%
+  group_by(recipient_name) %>%
+  summarize(total_payments = sum(disbursement_amount))
 
+toprecipient <- recipient_totals %>%
+  filter(total_payments == max(total_payments))
 
-
+toprecipient
 
 
 ```
@@ -116,9 +134,19 @@ Look at what this recipient was paid for. What service or good (see the "disburs
 
 ```{r}
 
+toprecipientpayments <- payments %>%
+  filter(recipient_name == "AMERICAN MADE MEDIA CONSULTANTS, LLC")
+
+topservicetotals <- toprecipientpayments %>%
+  group_by(disbursement_description) %>%
+  summarize(total_payments = sum(disbursement_amount))
+
+topservice <- topservicetotals %>%
+  arrange(desc(total_payments)) %>%
+  slice(1) 
 
 
-
+topservice
 
 
 ```
@@ -127,9 +155,13 @@ What's the most common category overall (see "disbursement_description") the cam
 
 ```{r}
 
+topcategory <- payments %>%
+  group_by(disbursement_description) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1)
 
-
-
+topcategory
 
 
 ```
@@ -138,11 +170,18 @@ Who were the 5 biggest recipients of campaign spending on "LEGAL CONSULTING"..?
 
 ```{r}
 
+legalconsulting <- payments %>%
+  filter(disbursement_description == "LEGAL CONSULTING")
 
+toplegal <- legalconsulting %>%
+  group_by(recipient_name) %>%
+  summarize(total_payments = sum(disbursement_amount))
 
+top5 <- toplegal %>%
+  arrange(-(total_payments)) %>%
+  slice(1:5)
 
-
-
+top5
 
 ```
 
@@ -151,11 +190,16 @@ Who are the top 5 individuals (vs. organization) were paid by the campaign commi
 
 ```{r}
 
+individual_payments <- payments %>%
+  filter(entity_type == "IND")
 
+top_individuals <- individual_payments %>%
+  group_by(payee_first_name, payee_last_name) %>%
+  summarize(total_payments = sum(disbursement_amount)) %>%
+  arrange(desc(total_payments)) %>%
+  head(5)  
 
-
-
-
+top_individuals
 
 ```
 
@@ -163,10 +207,6 @@ Who are the top 5 individuals (vs. organization) were paid by the campaign commi
 For the indvidual who was paid the most, which payment category (disbursement_description) was the top one for him or her? And how much money were they paid in that category?
 
 ```{r}
-
-
-
-
 
 
 
